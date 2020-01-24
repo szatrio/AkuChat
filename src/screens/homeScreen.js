@@ -4,25 +4,24 @@ import User from '../auth/user'
 import firebase from 'firebase'
 
 
+
 export default class HomeScreen extends React.Component{
-    static navigationOptions = ({navigation}) => {
-        return{
+    static navigationOptions = {
             title: 'Chats',
-            headerRight: (() =>
-                <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
-                    <Image source={require('../../assets/img/man.png')} style={styles.profilePic} />
-                </TouchableOpacity>
-            )
-        }
+            // headerRight: (() =>
+            //     <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
+            //         <Image source={require('../../assets/img/man.png')} style={styles.profilePic} />
+            //     </TouchableOpacity>
+            // )
     }
 
     state = {
-        users: []
+        users: [],
+        dbref: firebase.database().ref('users')
     }
 
     componentDidMount(){
-        let dbRef = firebase.database().ref('users')
-        dbRef.on('child_added', (val)=>{
+        this.state.dbref.on('child_added', (val)=>{
             let person = val.val()
             person.email = val.key
             // console.log(person, "ini person")
@@ -42,7 +41,9 @@ export default class HomeScreen extends React.Component{
         })
     }
 
-   
+   componentWillUnmount(){
+       this.state.dbref.off()
+   }
 
     renderRow = ({item}) => {
         return(

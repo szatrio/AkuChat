@@ -1,13 +1,30 @@
 import React, { Component } from 'react'
-import { SafeAreaView, View, Dimensions, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native'
+import { KeyboardAvoidingView, View, Platform, Image, Animated, Keyboard, Dimensions, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native'
 import firebase from 'firebase'
 import User from '../auth/user'
+
+const isAndroid = Platform.OS === 'android'
 
 export default class chatScreen extends Component {
     static navigationOptions = ({ navigation }) => {
         // console.log(navigation.getParam("name"),"ini navigation")
         return {
-            title: navigation.getParam('item').name
+            title: null,
+            headerLeft: (() =>
+                <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Image source={require('../../assets/img/man.png')} style={styles.profilePic} />
+                        <View style={{ flexDirection: 'column' }}>
+                            <Text style={{ fontSize: 14 }}>
+                                {navigation.getParam('item').name}
+                            </Text>
+                            <Text style={{ fontSize: 11 }}>
+                                Online
+                            </Text>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+            )
         }
     }
 
@@ -19,16 +36,25 @@ export default class chatScreen extends Component {
                 email: this.props.navigation.getParam('item').email
             },
             textMessage: '',
-            messageList: []
+            messageList: [],
+            dbRef: firebase.database().ref('messages')
         }
+        this.keyboardHeight = new Animated.Value(0)
+        this.bottomPadding = new Animated.Value(60)
     }
 
-    componentDidMount(){
-        firebase.database().ref('messages').child(User.email).child(this.state.person.email)
-            .on('child_added', (value)=>{
-                console.log(value.val(),"ini value")
-                this.setState((prevState)=>{
-                    return{
+    componentDidMount() {
+        this.keyboardShowListener = Keyboard.addListener(isAndroid ? 'keyboardWillShow' : 'keyboardDidShow',
+            (e) => this.keyboardEvent(e, true))
+
+        this.keyboardShowListener = Keyboard.addListener(isAndroid ? 'keyboardWillHide' : 'keyboardDidHide',
+            (e) => this.keyboardEvent(e, false))
+
+        this.state.dbRef.child(User.email).child(this.state.person.email)
+            .on('child_added', (value) => {
+                console.log(value.val(), "ini value")
+                this.setState((prevState) => {
+                    return {
                         messageList: [...prevState.messageList, value.val()]
                     }
                 }
@@ -36,17 +62,30 @@ export default class chatScreen extends Component {
             })
     }
 
+    keyboardEvent = (event, isShow) => {
+        Animated.parallel([
+            Animated.timing(this.keyboardHeight, {
+                duration: event.duration,
+                toValue: isShow ? 60 : 0
+            }),
+            Animated.timing(this.keyboardHeight, {
+                duration: event.duration,
+                toValue: isShow ? 120 : 60
+            })
+        ]).start()
+    }
+
     convertTime = time => {
         let d = new Date(time);
         let c = new Date();
         let result = (d.getHours() < 10 ? '0' : '') + d.getHours() + ':';
         result += (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
-    
+
         if (c.getDay() !== d.getDay()) {
-          result = d.getDay() + ' ' + d.getMonth() + ' ' + result;
+            result = d.getDay() + ' ' + d.getMonth() + ' ' + result;
         }
         return result;
-      }
+    }
 
     handleText = key => val => {
         this.setState({ [key]: val })
@@ -54,21 +93,16 @@ export default class chatScreen extends Component {
 
     sendMessage = async () => {
         if (this.state.textMessage.length > 0) {
-            let msgId = (await firebase
-                .database()
-                .ref('messages')
-                .child(User.email)
-                .child(this.state.person.email)
-                .push()).key
+            let msgId = this.state.dbRef.child(User.email).child(this.state.person.email).push().key
             let updates = {}
             let message = {
                 message: this.state.textMessage,
                 time: firebase.database.ServerValue.TIMESTAMP,
                 from: User.email
             }
-            updates['messages/' + User.email + '/' + this.state.person.email + '/' + msgId] = message
-            updates['messages/' + this.state.person.email + '/' + User.email + '/' + msgId] = message
-            firebase.database().ref().update(updates)
+            updates[User.email + '/' + this.state.person.email + '/' + msgId] = message
+            updates[this.state.person.email + '/' + User.email + '/' + msgId] = message
+            this.state.dbRef.update(updates)
             this.setState({ textMessage: '' })
         }
     }
@@ -96,10 +130,10 @@ export default class chatScreen extends Component {
 
     render() {
         // console.log(this.props.navigation.getParam('item').name, "ini props navigation")
-        let { height, width } = Dimensions.get('window')
+        let { height } = Dimensions.get('window')
         console.log(this.state.messageList, 'ini messagelist')
         return (
-            <SafeAreaView>
+            <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
                 <View style={styles.rowInput}>
                     <FlatList
                         style={{ padding: 10, height: height * 0.7 }}
@@ -108,20 +142,20 @@ export default class chatScreen extends Component {
                         keyExtractor={(item, index) => index.toString()}
                     />
                 </View>
-                    <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: height * 0.3, margin: 1}}>
-                        <TextInput
-                            style={styles.input}
-                            value={this.state.textMessage}
-                            onChangeText={this.handleText('textMessage')}
-                            placeholder="Type message..."
-                        />
-                        <TouchableOpacity onPress={this.sendMessage}>
-                            <Text style={styles.send}>
-                                Send
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-            </SafeAreaView>
+                <Animated.View style={[styles.aniView, { bottom: this.keyboardHeight }]}>
+                    <TextInput
+                        style={styles.input}
+                        value={this.state.textMessage}
+                        onChangeText={this.handleText('textMessage')}
+                        placeholder="Type message..."
+                    />
+                    <TouchableOpacity onPress={this.sendMessage}>
+                        <View style={styles.sendImg}>
+                            <Image source={require('../../assets/img/send.png')} style={styles.send} />
+                        </View>
+                    </TouchableOpacity>
+                </Animated.View>
+            </KeyboardAvoidingView>
         )
     }
 }
@@ -132,19 +166,38 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         borderWidth: 1,
         borderRadius: 5,
-        width: '80%'
+        width: '77%'
     },
     rowInput: {
-        paddingTop: '30%',
+        paddingTop: '28%',
         flexDirection: 'row',
         alignItems: 'center',
         height: '70%'
     },
-    send: {
-        padding: 10,
-        margin:4,
+    sendImg: {
+        padding: 5,
+        margin: 8,
         backgroundColor: '#4C5175',
-        color:'white',
-        borderRadius:50
+        borderRadius: 50,
+        width: 40,
+        height: 40,
+    },
+    send: {
+        tintColor: 'white',
+        marginTop: 3,
+        width: 25,
+        height: 25,
+    },
+    profilePic: {
+        width: 32,
+        height: 32,
+        marginHorizontal: 10,
+    },
+    aniView: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 150,
+        margin: 1
     }
 });

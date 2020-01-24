@@ -30,6 +30,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import User from '../auth/user'
 
+console.disableYellowBox = true
 
 class LoginScreen extends React.Component {
 

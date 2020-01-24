@@ -65,12 +65,12 @@ export default class profileScreen extends Component {
                 />
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity onPress={this.changeName}>
-                        <Text style={styles.button}>
+                        <Text style={styles.buttonUpdate}>
                             UPDATE
                         </Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={this._logOut} >
-                        <Text style={styles.button}>
+                        <Text style={styles.buttonLogout}>
                             LOGOUT
                         </Text>
                     </TouchableOpacity>
@@ -92,7 +92,8 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         width: '80%',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: '#F8F8F8' 
     },
     container: {
         backgroundColor: '#E1E8EC',
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    button: {
+    buttonUpdate: {
         padding: 10,
         marginVertical: 10,
         borderWidth: 1,
@@ -108,6 +109,17 @@ const styles = StyleSheet.create({
         width: 74,
         borderRadius: 6,
         backgroundColor: '#4C5175',
+        color: '#F8F8F8',
+        marginHorizontal: 10,
+    },
+    buttonLogout: {
+        padding: 10,
+        marginVertical: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        width: 74,
+        borderRadius: 6,
+        backgroundColor: '#E75A5F',
         color: '#F8F8F8',
         marginHorizontal: 10,
     },
