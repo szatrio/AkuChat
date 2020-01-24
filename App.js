@@ -14,8 +14,14 @@ import { createStackNavigator } from 'react-navigation-stack';
 import LoginScreen from './src/screens/loginScreen'
 import HomeScreen from './src/screens/homeScreen'
 import AuthLoadingScreen from './src/screens/authLoadingScreen'
+import ChatScreen from './src/screens/chatScreen'
+import ProfileScreen from './src/screens/profileScreen'
 
-const AppStack = createStackNavigator({ Home: HomeScreen});
+const AppStack = createStackNavigator({ 
+  Home: HomeScreen,
+  Chat: ChatScreen,
+  Profile: ProfileScreen
+});
 const AuthStack = createStackNavigator({ Login: LoginScreen });
 
 

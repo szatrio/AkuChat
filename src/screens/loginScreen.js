@@ -97,7 +97,7 @@ class LoginScreen extends React.Component {
             />
             <TouchableOpacity onPress={this.submitForm}>
               <Text style={styles.buttonRegist}>
-                Mamank
+                LOGIN
               </Text>
             </TouchableOpacity>
           </View>
