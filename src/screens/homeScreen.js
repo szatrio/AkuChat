@@ -12,7 +12,7 @@ export default class HomeScreen extends React.Component{
             //     <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
             //         <Image source={require('../../assets/img/man.png')} style={styles.profilePic} />
             //     </TouchableOpacity>
-            // )
+            // )User.image? {uri : User.image} : require('../../assets/img/man.png')
     }
 
     state = {
@@ -31,6 +31,7 @@ export default class HomeScreen extends React.Component{
             // console.log(person.email)
             if(person.email === User.email){
                 User.name = person.name
+                User.image = person.image ? person.image : null
             }else{
                 this.setState((prevState)=>{
                     return {
@@ -44,30 +45,17 @@ export default class HomeScreen extends React.Component{
    componentWillUnmount(){
        this.state.dbref.off()
    }
-
-    renderRow = ({item}) => {
-        return(
-            <TouchableOpacity style={styles.name} onPress={() => this.props.navigation.navigate('Chat', item)}>
-                <Text>{item.name}</Text>
-            </TouchableOpacity>
-           
-        )
-    }
     
     render(){
         console.log(this.state.users, "ini users")
         return (
             <SafeAreaView>
-                
-                {/* <FlatList 
-                    data={this.state.users}
-                    renderItem={this.renderRow}
-                    keyExtractor={(item) => item.email}
-                /> */}
                 <ScrollView>
                     {this.state.users.map(u => 
                         <TouchableOpacity style={styles.name} onPress={() => this.props.navigation.navigate('Chat', {item: u})}>
-                            <Text key={u.email}>
+                            <Image source={u.image? {uri:u.image}:require('../../assets/img/man.png')}
+                            style={styles.imageList}/>
+                            <Text key={u.email} style={styles.textList}>
                                 {u.name}
                             </Text>
                         </TouchableOpacity>
@@ -89,11 +77,22 @@ const styles = StyleSheet.create({
     name: {
       padding:10,
       borderBottomColor: '#ccc',
-      borderBottomWidth:1
+      borderBottomWidth:1,
+      flexDirection: 'row'
     },
     profilePic: {
       width:32,
       height:32,
       marginHorizontal:10
+    },
+    imageList: {
+        width:40,
+        height:40,
+        resizeMode: 'cover',
+        borderRadius: 50
+    },
+    textList: {
+        paddingTop:10,
+        marginLeft: 10
     }
   });

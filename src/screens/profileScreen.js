@@ -12,7 +12,7 @@ export default class profileScreen extends Component {
 
     state = {
         name: User.name,
-        imageSrc: require('../../assets/img/man.png'),
+        imageSrc: User.image? {uri : User.image} : require('../../assets/img/man.png'),
         upload: false,
     }
 
@@ -50,35 +50,40 @@ export default class profileScreen extends Component {
         })
     }
 
-    
-    updateUserImage = (imageUrl) => {
-        User.image = imageUrl
+    updateUser = () => {
         firebase
-                .database()
-                .ref('users')
-                .child(User.email)
-                .set({ image: imageUrl })
-        ToastAndroid.showWithGravity(
-            'Image changed was successful',
+          .database()
+          .ref('users')
+          .child(User.email)
+          .set(User);
+          ToastAndroid.showWithGravity(
+            'Changed was successfuly',
             ToastAndroid.SHORT,
             ToastAndroid.CENTER,
         )
+      };
+
+    updateUserImage = (imageUrl) => {
+        User.image = imageUrl
+        
+        this.updateUser()
+
         this.setState({upload : false, imageSrc: { uri: imageUrl}})
     }
 
     uploadFile = async () => {
         const file = await this.uriToBlob(this.state.imageSrc.uri)
-        console.log(firebase.storage(), "ini uploadfile")
+        // console.log(firebase.storage(), "ini uploadfile")
         firebase.storage().ref(`profile_pictures/${User.email}.png`)
             .put(file)
             .catch(err => console.log("errornya disini", err))
             .then(snapshot => snapshot.ref.getDownloadURL())
             .then(url => {
-                    console.log("terpanggil updateuserimage")
+                    // console.log("terpanggil updateuserimage")
                     this.updateUserImage(url)
                 })
             .catch(error =>{
-                console.log("terpanggil error")
+                // console.log("terpanggil error")
                 this.setState({
                     upload: false,
                     imageSrc: require('../../assets/img/man.png')
@@ -116,18 +121,9 @@ export default class profileScreen extends Component {
                 ToastAndroid.CENTER,
             )
         } else if (User.name !== this.state.name) {
-            firebase
-                .database()
-                .ref('users')
-                .child(User.email)
-                .set({ name: this.state.name })
-
             User.name = this.state.name
-            ToastAndroid.showWithGravity(
-                'Name was changed',
-                ToastAndroid.SHORT,
-                ToastAndroid.CENTER,
-            )
+            this.updateUser()
+            
         }
     }
 
