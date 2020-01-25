@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import { View, StyleSheet, TextInput, Text, SafeAreaView, ToastAndroid, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, TextInput, ActivityIndicator, Text, SafeAreaView, ToastAndroid, Image, TouchableOpacity, CameraRoll } from 'react-native'
 import User from '../auth/user'
 import firebase from 'firebase'
 import AsyncStorage from '@react-native-community/async-storage'
+import ImagePicker from 'react-native-image-picker'
 
 export default class profileScreen extends Component {
     static navigationOptions = {
@@ -10,7 +11,9 @@ export default class profileScreen extends Component {
     }
 
     state = {
-        name: User.name
+        name: User.name,
+        imageSrc: require('../../assets/img/man.png'),
+        upload: false,
     }
 
     handleChange = key => val => {
@@ -20,6 +23,88 @@ export default class profileScreen extends Component {
     _logOut = async () => {
         await AsyncStorage.clear()
         this.props.navigation.navigate('Auth')
+    }
+
+    changeImage = () => {
+        const options = {
+            quality: 0.7,
+            allowsEditing:true,
+            mediaType:'photo',
+            noData: true,
+            storageOptions: {
+                skipBackkup:true,
+                waitUntilSaved:true,
+                path: 'images',
+                cameraRoll: true
+            }
+        }
+        ImagePicker.showImagePicker(options, response => {
+            if(response.error){
+                console.log(error)
+            }else if(!response.didCancel){
+                this.setState({
+                    upload: true,
+                    imageSrc: {uri: response.uri}
+                }, this.uploadFile)
+            }
+        })
+    }
+
+    
+    updateUserImage = (imageUrl) => {
+        User.image = imageUrl
+        firebase
+                .database()
+                .ref('users')
+                .child(User.email)
+                .set({ image: imageUrl })
+        ToastAndroid.showWithGravity(
+            'Image changed was successful',
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER,
+        )
+        this.setState({upload : false, imageSrc: { uri: imageUrl}})
+    }
+
+    uploadFile = async () => {
+        const file = await this.uriToBlob(this.state.imageSrc.uri)
+        console.log(firebase.storage(), "ini uploadfile")
+        firebase.storage().ref(`profile_pictures/${User.email}.png`)
+            .put(file)
+            .catch(err => console.log("errornya disini", err))
+            .then(snapshot => snapshot.ref.getDownloadURL())
+            .then(url => {
+                    console.log("terpanggil updateuserimage")
+                    this.updateUserImage(url)
+                })
+            .catch(error =>{
+                console.log("terpanggil error")
+                this.setState({
+                    upload: false,
+                    imageSrc: require('../../assets/img/man.png')
+                })
+                ToastAndroid.showWithGravity(
+                    'Error, Error on upload image',
+                    ToastAndroid.SHORT,
+                    ToastAndroid.CENTER,
+                )
+            })
+    }
+
+    uriToBlob = (uri) => {
+        return new Promise((resolve, reject)=> {
+            const xhr = new XMLHttpRequest()
+            xhr.onload = function(){
+                resolve(xhr.response)
+            }
+            xhr.onerror = function(){
+                reject(new Error('Error on upload image'))
+            }
+
+            xhr.responseType = 'blob'
+            xhr.open('GET', uri, true)
+            xhr.send(null)
+        })
     }
 
     changeName = async () => {
@@ -50,6 +135,15 @@ export default class profileScreen extends Component {
         console.log(this.state.name, "ini state ame")
         return (
             <SafeAreaView style={styles.container}>
+
+                <TouchableOpacity onPress={this.changeImage}>
+                    {
+                        this.state.upload ? <ActivityIndicator size="large"/>:
+                        <Image source={this.state.imageSrc}
+                        style={{width:100, height:100, borderRadius:50, resizeMode: 'cover', marginVertical:10}}
+                        />
+                    }
+                </TouchableOpacity>
 
                 <Text style={styles.paragraph}>
                     {User.email}

@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
-import { KeyboardAvoidingView, View, Platform, Image, Animated, Keyboard, Dimensions, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, SafeAreaView } from 'react-native'
+import { KeyboardAvoidingView, TouchableWithoutFeedback, View, Platform, Image, Animated, Keyboard, Dimensions, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, SafeAreaView } from 'react-native'
 import firebase from 'firebase'
 import User from '../auth/user'
 import { Header } from 'react-navigation-stack'
 
-const isAndroid = Platform.OS === 'android'
 
 export default class chatScreen extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -40,17 +39,9 @@ export default class chatScreen extends Component {
             messageList: [],
             dbRef: firebase.database().ref('messages')
         }
-        this.keyboardHeight = new Animated.Value(0)
-        this.bottomPadding = new Animated.Value(60)
     }
 
     componentDidMount() {
-        this.keyboardShowListener = Keyboard.addListener(isAndroid ? 'keyboardWillShow' : 'keyboardDidShow',
-            (e) => this.keyboardEvent(e, true))
-
-        this.keyboardShowListener = Keyboard.addListener(isAndroid ? 'keyboardWillHide' : 'keyboardDidHide',
-            (e) => this.keyboardEvent(e, false))
-
         this.state.dbRef.child(User.email).child(this.state.person.email)
             .on('child_added', (value) => {
                 console.log(value.val(), "ini value")
@@ -63,18 +54,6 @@ export default class chatScreen extends Component {
             })
     }
 
-    keyboardEvent = (event, isShow) => {
-        Animated.parallel([
-            Animated.timing(this.keyboardHeight, {
-                duration: event.duration,
-                toValue: isShow ? 60 : 0
-            }),
-            Animated.timing(this.keyboardHeight, {
-                duration: event.duration,
-                toValue: isShow ? 120 : 60
-            })
-        ]).start()
-    }
 
     convertTime = time => {
         let d = new Date(time);
@@ -135,36 +114,30 @@ export default class chatScreen extends Component {
         console.log(this.state.messageList, 'ini messagelist')
         return (
             <KeyboardAvoidingView
-            keyboardVerticalOffset = {Header.HEIGHT -1000} // adjust the value here if you need more padding
-            style = {{ flex: 1 }}
-            behavior = "padding" >
-            {/* // <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}> */}
-                {/* <Animated.View style={[styles.aniView, { bottom: this.keyboardHeight }]}> */}
-                {/* </Animated.View> */}
-                <FlatList
-                    style={{ padding: 10, height: height * 0.7 }}
-                    data={this.state.messageList}
-                    renderItem={this.renderRow}
-                    keyExtractor={(item, index) => index.toString()}
-                />
-                {/* <SafeAreaView style={{flex:1}}> */}
-                
-                    <View style={styles.rowInput}>
-                        <TextInput
-                            style={styles.input}
-                            value={this.state.textMessage}
-                            onChangeText={this.handleText('textMessage')}
-                            placeholder="Type message..."
-                        />
-                        <TouchableOpacity onPress={this.sendMessage}>
-                            <View style={styles.sendImg}>
-                                <Image source={require('../../assets/img/send.png')} style={styles.send} />
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                
-                {/* </SafeAreaView> */}
-            {/* </KeyboardAvoidingView> */}
+                keyboardVerticalOffset={Header.HEIGHT - 1000}
+                style={{ flex: 1 }}
+                behavior="padding" >
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <FlatList
+                        style={{ padding: 10, height: height * 0.7 }}
+                        data={this.state.messageList}
+                        renderItem={this.renderRow}
+                        keyExtractor={(item, index) => index.toString()}
+                    />
+                </TouchableWithoutFeedback>
+                <View style={styles.rowInput}>
+                    <TextInput
+                        style={styles.input}
+                        value={this.state.textMessage}
+                        onChangeText={this.handleText('textMessage')}
+                        placeholder="Type message..."
+                    />
+                    <TouchableOpacity onPress={this.sendMessage}>
+                        <View style={styles.sendImg}>
+                            <Image source={require('../../assets/img/send.png')} style={styles.send} />
+                        </View>
+                    </TouchableOpacity>
+                </View>
             </KeyboardAvoidingView>
         )
     }
