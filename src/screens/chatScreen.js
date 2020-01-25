@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { KeyboardAvoidingView, View, Platform, Image, Animated, Keyboard, Dimensions, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native'
+import { KeyboardAvoidingView, View, Platform, Image, Animated, Keyboard, Dimensions, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, SafeAreaView } from 'react-native'
 import firebase from 'firebase'
 import User from '../auth/user'
+import { Header } from 'react-navigation-stack'
 
 const isAndroid = Platform.OS === 'android'
 
@@ -133,28 +134,37 @@ export default class chatScreen extends Component {
         let { height } = Dimensions.get('window')
         console.log(this.state.messageList, 'ini messagelist')
         return (
-            <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
-                <View style={styles.rowInput}>
-                    <FlatList
-                        style={{ padding: 10, height: height * 0.7 }}
-                        data={this.state.messageList}
-                        renderItem={this.renderRow}
-                        keyExtractor={(item, index) => index.toString()}
-                    />
-                </View>
-                <Animated.View style={[styles.aniView, { bottom: this.keyboardHeight }]}>
-                    <TextInput
-                        style={styles.input}
-                        value={this.state.textMessage}
-                        onChangeText={this.handleText('textMessage')}
-                        placeholder="Type message..."
-                    />
-                    <TouchableOpacity onPress={this.sendMessage}>
-                        <View style={styles.sendImg}>
-                            <Image source={require('../../assets/img/send.png')} style={styles.send} />
-                        </View>
-                    </TouchableOpacity>
-                </Animated.View>
+            <KeyboardAvoidingView
+            keyboardVerticalOffset = {Header.HEIGHT -1000} // adjust the value here if you need more padding
+            style = {{ flex: 1 }}
+            behavior = "padding" >
+            {/* // <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}> */}
+                {/* <Animated.View style={[styles.aniView, { bottom: this.keyboardHeight }]}> */}
+                {/* </Animated.View> */}
+                <FlatList
+                    style={{ padding: 10, height: height * 0.7 }}
+                    data={this.state.messageList}
+                    renderItem={this.renderRow}
+                    keyExtractor={(item, index) => index.toString()}
+                />
+                {/* <SafeAreaView style={{flex:1}}> */}
+                
+                    <View style={styles.rowInput}>
+                        <TextInput
+                            style={styles.input}
+                            value={this.state.textMessage}
+                            onChangeText={this.handleText('textMessage')}
+                            placeholder="Type message..."
+                        />
+                        <TouchableOpacity onPress={this.sendMessage}>
+                            <View style={styles.sendImg}>
+                                <Image source={require('../../assets/img/send.png')} style={styles.send} />
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                
+                {/* </SafeAreaView> */}
+            {/* </KeyboardAvoidingView> */}
             </KeyboardAvoidingView>
         )
     }
@@ -166,13 +176,14 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         borderWidth: 1,
         borderRadius: 5,
-        width: '77%'
+        width: '84%'
     },
     rowInput: {
-        paddingTop: '28%',
+        // paddingTop: '28%',
         flexDirection: 'row',
         alignItems: 'center',
-        height: '70%'
+        // height: '70%'
+        margin: 3,
     },
     sendImg: {
         padding: 5,
