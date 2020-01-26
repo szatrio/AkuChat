@@ -6206,6 +6206,10 @@ react-native-keyboard-aware-scroll-view@^0.9.1:
     prop-types "^15.6.2"
     react-native-iphone-x-helper "^1.0.3"
 
+"react-native-maps@https://github.com/react-native-community/react-native-maps.git":
+  version "0.26.1"
+  resolved "https://github.com/react-native-community/react-native-maps.git#ef16f9c4d6f4cda3fb067c391f15239401969a69"
+
 react-native-paper@^3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-3.5.0.tgz#d74db26fa1714911ec1c9187c430726c680f4b52"

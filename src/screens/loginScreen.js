@@ -65,10 +65,23 @@ class LoginScreen extends React.Component {
         await AsyncStorage.setItem('userEmail', this.state.email)
         // console.log(this.props, "ini props")
         User.email = this.state.email
-        firebase.database().ref('users/' + User.email).set({name: this.state.name})
+        this.updateUser()
         this.props.navigation.navigate('App')
       }
   }
+
+    updateUser = () => {
+      firebase
+        .database()
+        .ref('users')
+        .child(User.email)
+        .set(User);
+        ToastAndroid.showWithGravity(
+          'Login was successfuly',
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER,
+      )
+    };
 
   render(){
     // console.log(this.state)

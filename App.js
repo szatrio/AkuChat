@@ -20,6 +20,7 @@ import HomeScreen from './src/screens/homeScreen'
 import AuthLoadingScreen from './src/screens/authLoadingScreen'
 import ChatScreen from './src/screens/chatScreen'
 import ProfileScreen from './src/screens/profileScreen'
+import MapScreen from './src/screens/mapScreen'
 
 const AppStack = createStackNavigator({
   Home: HomeScreen,
@@ -38,7 +39,7 @@ const AuthStack = createStackNavigator({ Login: LoginScreen });
 
 const TabNavigator = createBottomTabNavigator({
   Chats: AppStack,
-  // Locations: ProfileScreen,
+  Maps: MapScreen,
   Profile: ProfileScreen,
 },
 {
@@ -49,14 +50,18 @@ const TabNavigator = createBottomTabNavigator({
       if (routeName === 'Profile') {
         imageName = require('./assets/img/user.png')
       }
-
-      // You can return any component that you like here!
+      if (routeName === 'Maps') {
+        imageName = require('./assets/img/placeholder.png')
+      }
       return <Image source={imageName} style={{width:25, resizeMode: 'contain'}} />;
     },
   }),
   tabBarOptions: {
     activeTintColor: 'tomato',
     inactiveTintColor: 'gray',
+    tabStyle: {
+      paddingTop: 5
+    }
   },
 }
 )

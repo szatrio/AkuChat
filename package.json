@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.7.1",
+    "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/masked-view": "^0.1.6",
     "firebase": "^7.7.0",
     "jetifier": "^1.6.5",
@@ -19,6 +20,7 @@
     "react-native-gesture-handler": "^1.5.3",
     "react-native-image-picker": "^2.2.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.1",
+    "react-native-maps": "https://github.com/react-native-community/react-native-maps.git",
     "react-native-paper": "^3.5.0",
     "react-native-reanimated": "^1.7.0",
     "react-native-safe-area-context": "^0.6.2",

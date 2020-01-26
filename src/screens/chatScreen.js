@@ -10,15 +10,19 @@ export default class chatScreen extends Component {
         // console.log(navigation.getParam("name"),"ini navigation")
         return {
             title: null,
+            headerStyle: {
+                backgroundColor: '#4C5175',
+                    
+                  },
             headerLeft: (() =>
                 <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
                     <View style={{ flexDirection: 'row' }}>
                         <Image source={require('../../assets/img/man.png')} style={styles.profilePic} />
                         <View style={{ flexDirection: 'column' }}>
-                            <Text style={{ fontSize: 14 }}>
+                            <Text style={{ fontSize: 14, color: 'white' }}>
                                 {navigation.getParam('item').name}
                             </Text>
-                            <Text style={{ fontSize: 11 }}>
+                            <Text style={{ fontSize: 11, color: 'white' }}>
                                 Online
                             </Text>
                         </View>

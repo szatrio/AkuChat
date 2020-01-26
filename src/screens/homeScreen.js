@@ -8,6 +8,13 @@ import firebase from 'firebase'
 export default class HomeScreen extends React.Component{
     static navigationOptions = {
             title: 'Chats',
+            headerStyle: {
+            backgroundColor: '#4C5175',
+                
+              },
+            headerTitleStyle: {
+                color: 'white'
+              }
             // headerRight: (() =>
             //     <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
             //         <Image source={require('../../assets/img/man.png')} style={styles.profilePic} />
