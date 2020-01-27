@@ -17,7 +17,7 @@ export default class chatScreen extends Component {
             headerLeft: (() =>
                 <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
                     <View style={{ flexDirection: 'row' }}>
-                        <Image source={require('../../assets/img/man.png')} style={styles.profilePic} />
+                        <Image source={(navigation.getParam('item').image)?{uri: navigation.getParam('item').image} : require('../../assets/img/man.png')} style={styles.profilePic} />
                         <View style={{ flexDirection: 'column' }}>
                             <Text style={{ fontSize: 14, color: 'white' }}>
                                 {navigation.getParam('item').name}
@@ -61,13 +61,13 @@ export default class chatScreen extends Component {
 
     convertTime = time => {
         let d = new Date(time);
-        let c = new Date();
+        // let c = new Date();
         let result = (d.getHours() < 10 ? '0' : '') + d.getHours() + ':';
         result += (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
 
-        if (c.getDay() !== d.getDay()) {
-            result = d.getDay() + ' ' + d.getMonth() + ' ' + result;
-        }
+        // if (c.getDay() !== d.getDay()) {
+        //     result = d.getDay() + ' ' + d.getMonth() + ' ' + result;
+        // }
         return result;
     }
 
@@ -105,9 +105,9 @@ export default class chatScreen extends Component {
                 <Text style={{ color: '#fff', padding: 7, fontSize: 16 }}>
                     {item.message}
                 </Text>
-                <Text style={{ color: '#eee', padding: 3, fontSize: 12 }}>
-                    {this.convertTime(item.time)}
-                </Text>
+                    <Text style={{ color: '#eee', position: 'absolute', padding: 3, marginLeft: 140, fontSize: 12 }}>
+                        {this.convertTime(item.time)}
+                    </Text>
             </View>
         )
     }
@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
         width: 32,
         height: 32,
         marginHorizontal: 10,
+        borderRadius: 50
     },
     aniView: {
         flexDirection: 'row',

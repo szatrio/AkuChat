@@ -2,7 +2,11 @@ const User = {
     email: null,
     name: null,
     password: null,
-    image: null
+    image: null,
+    position: {
+        lat: null,
+        long: null
+    }
 }
 
 export default User

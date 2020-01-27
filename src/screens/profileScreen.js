@@ -131,12 +131,12 @@ export default class profileScreen extends Component {
         console.log(this.state.name, "ini state ame")
         return (
             <SafeAreaView style={styles.container}>
-
+                <Image source={require('../../assets/img/coverchat.jpg')} style={styles.cover} />
                 <TouchableOpacity onPress={this.changeImage}>
                     {
                         this.state.upload ? <ActivityIndicator size="large"/>:
                         <Image source={this.state.imageSrc}
-                        style={{width:100, height:100, borderRadius:50, resizeMode: 'cover', marginVertical:10}}
+                        style={styles.profilePic}
                         />
                     }
                 </TouchableOpacity>
@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         borderWidth: 1,
         borderRadius: 5,
+        marginVertical:3,
         width: '80%',
         justifyContent: 'center',
         alignItems: 'center',
@@ -189,7 +190,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#E1E8EC',
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        
     },
     buttonUpdate: {
         padding: 10,
@@ -213,4 +215,20 @@ const styles = StyleSheet.create({
         color: '#F8F8F8',
         marginHorizontal: 10,
     },
+    cover: {
+        width: '100%',
+        height: '31.5%',
+        position: 'absolute',
+        opacity: 0.8,
+        top: 0
+    },
+    profilePic: {
+        width:100,
+        height:100,
+        borderRadius:50,
+        resizeMode: 'cover',
+        marginVertical:10,
+        borderWidth: 4,
+        borderColor: '#E1E8EC'
+    }
 });

@@ -17,9 +17,11 @@ import {
   TextInput,
   TouchableOpacity,
   ToastAndroid,
+  Image
 } from 'react-native';
 import firebase from 'firebase'
 import AsyncStorage from '@react-native-community/async-storage'
+import Geolocation from '@react-native-community/geolocation'
 
 import {
   Header,
@@ -41,7 +43,9 @@ class LoginScreen extends React.Component {
   state = {
     email: '',
     name: '',
-    password: ''
+    password: '',
+    longitude: '',
+    latitude: '',
   }
 
   handleChange = key => val =>{
@@ -49,6 +53,14 @@ class LoginScreen extends React.Component {
   }
 
   submitForm = async () => {
+      Geolocation.getCurrentPosition(info => {
+        console.log(info.coords.longitude, "long");
+        console.log(info.coords.latitude, "lat");
+        this.setState({
+          longitude: info.coords.longitude,
+          latitude: info.coords.latitude,
+        })
+      })
       if(this.state.name.length < 4){
         ToastAndroid.showWithGravity(
           'Your name too short',
@@ -65,6 +77,9 @@ class LoginScreen extends React.Component {
         await AsyncStorage.setItem('userEmail', this.state.email)
         // console.log(this.props, "ini props")
         User.email = this.state.email
+        User.name = this.state.name
+        User.position.lat = this.state.latitude
+        User.position.long = this.state.longitude
         this.updateUser()
         this.props.navigation.navigate('App')
       }
@@ -88,7 +103,9 @@ class LoginScreen extends React.Component {
     return (
       <>
         <View style={styles.container}>
+          <Image source={require('../../assets/img/coverchat.jpg')} style={styles.wall}/>
           <View style={styles.card}>
+            <Image source={require('../../assets/img/akuchat.png')} style={styles.logo}/>
             <TextInput
             placeholder="Name"
             style={styles.input}
@@ -96,7 +113,7 @@ class LoginScreen extends React.Component {
             onChangeText={this.handleChange('name')}
             />
             <TextInput
-            placeholder="Email"
+            placeholder="Phone number"
             email
             style={styles.input}
             value={this.state.email}
@@ -123,10 +140,16 @@ class LoginScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#4C5175',
+    backgroundColor: 'white',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  wall: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    opacity: 0.8
   },
   card: {
     backgroundColor: '#E1E8EC',
@@ -134,7 +157,13 @@ const styles = StyleSheet.create({
     height: 300,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 6
+    borderRadius: 6,
+    opacity:0.8
+  },
+  logo:{
+    width: 150,
+    height: 50,
+    marginVertical:10
   },
   input: {
     padding: 10,
@@ -143,7 +172,8 @@ const styles = StyleSheet.create({
     borderColor:'#ccc',
     width:'90%',
     borderRadius: 6,
-    backgroundColor: '#F8F8F8'
+    backgroundColor: '#F8F8F8',
+    opacity:0.8
   },
   buttonRegist: {
     padding: 10,

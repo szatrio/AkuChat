@@ -54,7 +54,7 @@ export default class HomeScreen extends React.Component{
    }
     
     render(){
-        console.log(this.state.users, "ini users")
+        console.log(User, "ini users")
         return (
             <SafeAreaView>
                 <ScrollView>
