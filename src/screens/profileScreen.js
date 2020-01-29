@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, StyleSheet, TextInput, ActivityIndicator, Text, SafeAreaView, ToastAndroid, Image, TouchableOpacity, CameraRoll } from 'react-native'
+import { View, StyleSheet, TextInput, ScrollView, ActivityIndicator, Text, SafeAreaView, ToastAndroid, Image, TouchableOpacity, CameraRoll } from 'react-native'
 import User from '../auth/user'
 import firebase from 'firebase'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -22,9 +22,7 @@ export default class profileScreen extends Component {
 
     _logOut = async () => {
         await AsyncStorage.clear()
-        this.setState({
-            imageSrc: require('../../assets/img/man.png')
-        })
+        
         this.props.navigation.navigate('Auth')
     }
 
@@ -132,7 +130,10 @@ export default class profileScreen extends Component {
 
     render() {
         return (
-            <SafeAreaView style={styles.container}>
+            <ScrollView contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}} style={styles.container}>
+                <View style={{marginTop:'30%'}}>
+
+                </View>
                 <Image source={require('../../assets/img/coverchat.jpg')} style={styles.cover} />
                 <TouchableOpacity onPress={this.changeImage}>
                     {
@@ -167,7 +168,7 @@ export default class profileScreen extends Component {
                         </Text>
                     </TouchableOpacity>
                 </View>
-            </SafeAreaView>
+            </ScrollView>
         )
     }
 }
@@ -191,9 +192,6 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#E1E8EC',
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        
     },
     buttonUpdate: {
         padding: 10,
@@ -219,7 +217,7 @@ const styles = StyleSheet.create({
     },
     cover: {
         width: '100%',
-        height: '31.5%',
+        height: '40%',
         position: 'absolute',
         opacity: 0.8,
         top: 0

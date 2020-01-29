@@ -24,7 +24,7 @@ export default class HomeScreen extends React.Component{
 
     state = {
         users: [],
-        dbref: firebase.database().ref('users')
+        dbref: firebase.database().ref('users').orderByChild('name')
     }
 
     componentDidMount(){
@@ -54,7 +54,7 @@ export default class HomeScreen extends React.Component{
    }
     
     render(){
-        console.log(User, "ini users")
+        // console.log(User, "ini users")
         return (
             <SafeAreaView>
                 <ScrollView>

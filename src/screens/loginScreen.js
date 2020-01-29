@@ -23,13 +23,6 @@ import firebase from 'firebase'
 import AsyncStorage from '@react-native-community/async-storage'
 import Geolocation from '@react-native-community/geolocation'
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 import User from '../auth/user'
 
 console.disableYellowBox = true
@@ -54,8 +47,6 @@ class LoginScreen extends React.Component {
 
   submitForm = async () => {
       Geolocation.getCurrentPosition(info => {
-        console.log(info.coords.longitude, "long");
-        console.log(info.coords.latitude, "lat");
         this.setState({
           longitude: info.coords.longitude,
           latitude: info.coords.latitude,
@@ -75,11 +66,20 @@ class LoginScreen extends React.Component {
         )
       }else{
         await AsyncStorage.setItem('userEmail', this.state.email)
-        // console.log(this.props, "ini props")
+        firebase
+          .database()
+          .ref('users')
+          .child(this.state.email)
+          .once('value', function(snapshot){
+            if (snapshot.hasChild('image') == false) {
+              User.image = null
+            } 
+          })
         User.email = this.state.email
         User.name = this.state.name
         User.position.lat = this.state.latitude
         User.position.long = this.state.longitude
+        
         this.updateUser()
         this.props.navigation.navigate('App')
       }
@@ -99,7 +99,6 @@ class LoginScreen extends React.Component {
     };
 
   render(){
-    // console.log(this.state)
     return (
       <>
         <View style={styles.container}>

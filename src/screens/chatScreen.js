@@ -49,7 +49,7 @@ export default class chatScreen extends Component {
     componentDidMount() {
         this.state.dbRef.child(User.email).child(this.state.person.email)
             .on('child_added', (value) => {
-                console.log(value.val(), "ini value")
+                // console.log(value.val(), "ini value")
                 this.setState((prevState) => {
                     return {
                         messageList: [...prevState.messageList, value.val()]
