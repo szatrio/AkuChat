@@ -4,6 +4,7 @@ import firebase from 'firebase'
 import User from '../auth/user'
 import { Header } from 'react-navigation-stack'
 
+let dmsn = Dimensions.get('window')
 
 export default class chatScreen extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -12,12 +13,12 @@ export default class chatScreen extends Component {
             title: null,
             headerStyle: {
                 backgroundColor: '#4C5175',
-                    
-                  },
+
+            },
             headerLeft: (() =>
                 <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
                     <View style={{ flexDirection: 'row' }}>
-                        <Image source={(navigation.getParam('item').image)?{uri: navigation.getParam('item').image} : require('../../assets/img/man.png')} style={styles.profilePic} />
+                        <Image source={(navigation.getParam('item').image) ? { uri: navigation.getParam('item').image } : require('../../assets/img/man.png')} style={styles.profilePic} />
                         <View style={{ flexDirection: 'column' }}>
                             <Text style={{ fontSize: 14, color: 'white' }}>
                                 {navigation.getParam('item').name}
@@ -92,30 +93,35 @@ export default class chatScreen extends Component {
     }
 
     renderRow = ({ item }) => {
-        console.log(item, "ini item")
+        // console.log(item, "ini item")
         return (
             <View style={{
-                flexDirection: 'row',
-                width: '60%',
+                flexDirection: 'column',
+                maxWidth: '60%',
                 alignSelf: item.from === User.email ? 'flex-end' : 'flex-start',
-                backgroundColor: item.from === User.email ? '#00897B' : '#7CB342',
-                borderRadius: 5,
-                marginBottom: 10
+                backgroundColor: item.from === User.email ? '#BCE7D9' : '#E1E8EC',
+                marginHorizontal: 3,
+                marginBottom: 12,
+                shadowColor: "#000",
+                shadowOffset: {
+                    width: 0,
+                    height: 1,
+                },
+                shadowOpacity: 0.22,
+                elevation: 3,
+                borderRadius:10
             }}>
-                <Text style={{ color: '#fff', padding: 7, fontSize: 16 }}>
+                <Text style={{ color: '#4C5175', paddingHorizontal: 7, paddingTop: 7, fontSize: 16 }}>
                     {item.message}
                 </Text>
-                    <Text style={{ color: '#eee', position: 'absolute', padding: 3, marginLeft: 140, fontSize: 12 }}>
-                        {this.convertTime(item.time)}
-                    </Text>
+                <Text style={{ color: '#4C5175', padding: 7, alignSelf: 'flex-end', fontSize: 12 }}>
+                    {this.convertTime(item.time)}
+                </Text>
             </View>
         )
     }
 
     render() {
-        // console.log(this.props.navigation.getParam('item').name, "ini props navigation")
-        let { height } = Dimensions.get('window')
-        console.log(this.state.messageList, 'ini messagelist')
         return (
             <KeyboardAvoidingView
                 keyboardVerticalOffset={Header.HEIGHT - 1000}
@@ -123,7 +129,7 @@ export default class chatScreen extends Component {
                 behavior="padding" >
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <FlatList
-                        style={{ padding: 10, height: height * 0.7 }}
+                        style={{ padding: 10, height: '70%' }}
                         data={this.state.messageList}
                         renderItem={this.renderRow}
                         keyExtractor={(item, index) => index.toString()}
@@ -153,7 +159,7 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         borderWidth: 1,
         borderRadius: 5,
-        width: '84%'
+        width: dmsn.width * 0.82
     },
     rowInput: {
         // paddingTop: '28%',

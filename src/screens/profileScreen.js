@@ -22,6 +22,9 @@ export default class profileScreen extends Component {
 
     _logOut = async () => {
         await AsyncStorage.clear()
+        this.setState({
+            imageSrc: require('../../assets/img/man.png')
+        })
         this.props.navigation.navigate('Auth')
     }
 
@@ -128,7 +131,6 @@ export default class profileScreen extends Component {
     }
 
     render() {
-        console.log(this.state.name, "ini state ame")
         return (
             <SafeAreaView style={styles.container}>
                 <Image source={require('../../assets/img/coverchat.jpg')} style={styles.cover} />
@@ -230,5 +232,5 @@ const styles = StyleSheet.create({
         marginVertical:10,
         borderWidth: 4,
         borderColor: '#E1E8EC'
-    }
+    },
 });
